@@ -5,9 +5,10 @@ const {
   userData
 } = require('../data/index.js');
 
-
-
 const { formatDates, formatComments, makeRefObj } = require('../utils/utils');
+
+
+
 
 exports.seed = function(knex) {
   const topicsInsertions = knex('topics').insert(topicData);
@@ -23,6 +24,9 @@ exports.seed = function(knex) {
 
       Your comment insertions will depend on information from the seeded articles, so make sure to return the data after it's been seeded.
       */
+
+      const newArticleData = formatDates(articleData)
+      return articlesInsertions = knex('articles').insert(newArticleData).returning('*');
     })
     .then(articleRows => {
       /* 
