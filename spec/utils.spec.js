@@ -31,7 +31,7 @@ describe('formatDates', () => {
  
 });
 
-describe('makeRefObj', () => {
+describe.only('makeRefObj', () => {
   it('Returns an empty object when passed an empty array', () => {
     expect(makeRefObj([])).to.eql({});
   })
@@ -50,7 +50,7 @@ describe('makeRefObj', () => {
   })
 });
 
-describe.only('formatComments', () => {
+describe('formatComments', () => {
   it('Returns empty array when passed an empty array and object', () => {
     expect(formatComments([], {})).to.eql([]);
   })
