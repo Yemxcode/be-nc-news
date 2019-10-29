@@ -63,13 +63,13 @@ describe.only('/api', () => {
           expect(body).to.have.keys(['author', 'title', 'article_id', 'body', 'topic', 'created_at', 'votes', 'comment_count']);
         })
     })
-    it('status:200 responds with the updated article when a patch request is made', () => {
+    it('status:200 responds with the updated article when an patch request is made', () => {
       return request(app)
         .patch('/api/articles/1')
-        .send({ vote : 1 })
+        .send({ inc_votes : -1 })
         .expect(200)
         .then(({ body }) => {
-        expect(body.votes).to.equal(101);
+        expect(body.votes).to.equal(99);
       })
     })
   })  
