@@ -32,7 +32,7 @@ describe('formatDates', () => {
  
 });
 
-describe.only('makeRefObj', () => {
+describe('makeRefObj', () => {
   it('Returns an empty object when passed an empty array', () => {
     expect(makeRefObj([])).to.eql({});
   })
