@@ -17,3 +17,13 @@ exports.fetchArticleById = (id) => {
   return article;
  });
 }
+
+exports.updateArticleById = (vote, id) => {
+  return knex('articles')
+  .where({article_id : id})
+  .increment('votes', vote)
+  .returning('*')
+  .then(([article]) => {
+   return article;
+  });
+}
