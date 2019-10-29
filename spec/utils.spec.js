@@ -5,6 +5,7 @@ const {
   formatComments,
 } = require('../db/utils/utils');
 
+
 describe('formatDates', () => {
   it('Returns an empty array, when passed an empty array', () => {
     expect(formatDates([])).to.eql([]);
