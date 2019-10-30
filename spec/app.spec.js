@@ -60,7 +60,7 @@ describe.only('/api', () => {
         .get('/api/articles/4')
         .expect(200)
         .then(({body}) =>{
-          expect(body).to.have.keys(['author', 'title', 'article_id', 'body', 'topic', 'created_at', 'votes', 'comment_count']);
+          expect(body).to.contain.keys('author', 'title', 'article_id', 'body', 'topic', 'created_at', 'votes', 'comment_count');
         })
     })
     it('status:200 responds with the updated article when an patch request is made', () => {
@@ -72,6 +72,38 @@ describe.only('/api', () => {
         expect(body.votes).to.equal(99);
       })
     })
-  })  
+  }) 
+  describe('/api/articles/:article_id/comments', () => {
+    it('status:201 responds with object of posted comment', () => {
+      return request(app)
+        .post('/api/articles/1/comments')
+        .send({ username: 'rogersop', body: 'You call this an article?'})
+        .expect(201)
+        .then(({body}) => {
+          expect(body).to.be.an('object');
+          expect(body.author).to.equal('rogersop');
+          expect(body.body).to.equal('You call this an article?');
+        })
+    })
+    it('status:200 responds with an array of comments for article_id',() => {
+      return request(app)
+        .get('/api/articles/1/comments')
+        .expect(200)
+        .then(({body}) =>{
+          expect(body).to.be.an('array');
+          body.forEach(comment => 
+            expect(comment).to.contain.keys('comment_id', 'votes', 'created_at', 'author', 'body') 
+          )
+        })
+    })
+    xit('status:200 responds with an array sorted by and defaults to created_at and descending', () => {
+      return request(app)
+        .get('/api/articles/1/comments?sort_by=votes&order=desc')
+        .expect(200)
+        .then(({body}) => {
+          expect(body).to
+        })
+    })
+  }) 
 
 })
