@@ -144,5 +144,27 @@ describe.only('/api', () => {
         })
     })
   })
+  describe('/api/comments/:comment_id', () => {
+    it('status:202 responds with an object with votes incremented', () => {
+      return request(app)
+        .patch('/api/comments/2')
+        .send({ inc_votes: 1 })
+        .expect(202)
+        .then(({body}) => {
+          expect(body).to.be.an('object')
+          expect(body.votes).to.equal(15)
+        })
+    })
+    it('Responds with the comment with the comment id passed and vote decremented', () => {
+      return request(app)
+      .patch('/api/comments/2')
+      .send({inc_votes: -1})
+      .expect(202)
+      .then(({body})=> {
+        expect(body.comment_id).to.equal(2)
+        expect(body.votes).to.equal(13);
+      })
+    })
+  })
 
 })
