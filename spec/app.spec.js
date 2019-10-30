@@ -165,6 +165,30 @@ describe.only('/api', () => {
         expect(body.votes).to.equal(13);
       })
     })
+    it('status:204 delete given comment by comment_id', () => {
+      return request(app)
+      .delete('/api/comments/2')
+      .expect(204);
+    })
+    it('status:200 get comment gets comment', () => {
+      return getComment = request(app)
+        .get('/api/comments/2')
+        .expect(200).then(({body}) => {
+          expect(body).to.contain.keys('comment_id', 'author', 'article_id', 'votes', 'created_at', 'body')
+        })
+    })
+    it('Deletes the comment',() => {
+      return request(app)
+        .delete('/api/comments/2')
+        .expect(204)
+        .then(() => {
+          return request(app)
+            .get('/api/comments/2')
+            .expect(200)
+        }).then(({body}) => {
+          expect(body).to.be.an('object').that.is.empty;
+        })
+    })
   })
 
 })

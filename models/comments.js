@@ -11,3 +11,18 @@ exports.changeCommentVote = (vote, id) => {
    return comment;
   })
 }
+
+
+exports.deleteCommentById = (id) => {
+ return knex('comments')
+  .where('comment_id', id)
+  .del();
+}
+
+
+exports.fetchCommentById = (id) => {
+  return knex('comments')
+   .where('comment_id', id)
+   .returning('*')
+   .then(([comment]) => comment);
+}
