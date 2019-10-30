@@ -44,6 +44,7 @@ exports.insertCommentById = (id, user, comment) => {
 }
 
 
-exports.fetchCommentsById = (id) => {
- return knex('comments').where('article_id', id).returning('*').then(comments => comments);
+exports.fetchCommentsById = (id, sort = 'created_at', order = 'desc') => {
+ return knex('comments').where('article_id', id).returning('*')
+ .orderBy(sort, order).then(comments => comments);
 }

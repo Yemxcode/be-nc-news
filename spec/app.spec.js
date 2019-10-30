@@ -1,10 +1,11 @@
 process.env.NODE_ENV = "test";
 const request = require("supertest");
 const chai = require("chai");
+const chaiSorted = require('chai-sorted');
 const expect = chai.expect;
 const app = require("../app");
 const connection = require('../db/connection');
-
+chai.use(chaiSorted);
 
 describe.only('/api', () => {
 
@@ -85,7 +86,7 @@ describe.only('/api', () => {
           expect(body.body).to.equal('You call this an article?');
         })
     })
-    it('status:200 responds with an array of comments for article_id',() => {
+    it('status:200 responds with an array of comments for article_id, defaults to the  order_by created at and desc',() => {
       return request(app)
         .get('/api/articles/1/comments')
         .expect(200)
@@ -94,14 +95,17 @@ describe.only('/api', () => {
           body.forEach(comment => 
             expect(comment).to.contain.keys('comment_id', 'votes', 'created_at', 'author', 'body') 
           )
+          expect(body).to.be.descendingBy('created_at');
+          expect(body.length).to.equal(13);
         })
     })
-    xit('status:200 responds with an array sorted by and defaults to created_at and descending', () => {
+    it('status:200 responds with an array sorted by query', () => {
       return request(app)
-        .get('/api/articles/1/comments?sort_by=votes&order=desc')
+        .get('/api/articles/1/comments?sort_by=votes&order_by=desc')
         .expect(200)
         .then(({body}) => {
-          expect(body).to
+          expect(body).to.be.descendingBy('votes');
+          expect(body.length).to.equal(13);
         })
     })
   }) 
