@@ -5,8 +5,7 @@ const createErrMessage = (err) => {
 }
 
 exports.handleCustomErrors = (err, req, res, next) => {
- 
-  res.status(200).send(err.msg);
+  res.status(404).send(err.msg);
 }
 
 exports.psqlErrorHandler = (err, req, res, next) => {

@@ -28,7 +28,7 @@ describe.only('/api', () => {
       });
     })
   })
-  describe.only('ERRORS ->/api/topics', () => {
+  describe('ERRORS ->/api/topics', () => {
     it('status:404 for invalid url spelling', () => {
       return request(app)
         .get('/api/topic')
@@ -58,15 +58,36 @@ describe.only('/api', () => {
         expect(user).to.have.keys(['username', 'avatar_url', 'name']);
       });
     });
+  })
+  describe('ERRORS ->/users/:username', () => {
+    it('status:404 wrong url', () => {
+      return request(app)
+        .get('/api/users/')
+        .expect(404)
+        .then(({ body: { msg } }) => {
+          expect(msg).to.equal('Route Not found :/, Please check the spelling of the URL and try again. Thank you :D');
+        });
+    });
     it('status:404 for invalid username', () => {
       return request(app)
-      .get('/api/users/notAUsername')
-      .expect(404)
-      .then(({text}) => {
-        expect(text).to.equal('No user found for username: notAUsername');
-      });
+        .get('/api/users/1234')
+        .expect(404)
+        .then(({error : {text}}) => {
+          expect(text).to.equal('No user found for username: 1234');
+        });
     });
-  })
+    it('status:405 method not allowed',() => {
+      const invalidMethods = ['post', 'patch', 'put', 'delete'];
+      const methodPromises = invalidMethods.map(method => {
+        return request(app)[method]('/api/users/:username')
+          .expect(405)
+          .then(({ body: { msg } }) => {
+            expect(msg).to.equal('Unfortunately this method is not allowed with this route');
+          })
+      })
+      return Promise.all(methodPromises);
+    })
+  });
   describe('/api/articles/:article_id', ()=> {
     it('status:200 responds with the article as an object', () => {
       return request(app)
