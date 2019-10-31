@@ -27,15 +27,27 @@ describe.only('/api', () => {
        expect(topics[0]).to.have.keys(['slug', 'description']);
       });
     })
-    xit('status:404 for invalid url spelling', () => {
+  })
+  describe.only('ERRORS ->/api/topics', () => {
+    it('status:404 for invalid url spelling', () => {
       return request(app)
         .get('/api/topic')
         .expect(404)
-        .then(({error})  => {
-          // console.log(error);
-          expect(error).to.equal('No user found for username: notAUsername');
+        .then(({body : {msg}}) => {
+          expect(msg).to.equal('Route Not found :/, Please check the spelling of the URL and try again. Thank you :D');
         });
     });
+    it('status:405 INVALID methods', () => {
+      const invalidMethods = ['post', 'patch', 'put', 'delete'];
+      const methodPromises = invalidMethods.map(method=> {
+        return request(app)[method]('/api/topics')
+          .expect(405)
+          .then(({ body: { msg }}) => {
+            expect(msg).to.equal('Unfortunately this method is not allowed with this route');
+          })
+      })
+      return Promise.all(methodPromises);
+    })
   })
   describe('/users/:username', () => {
     it('status:200 Responds with user object by username with the properties username, avatar_url_ and name', () => {
@@ -145,11 +157,11 @@ describe.only('/api', () => {
     })
   })
   describe('/api/comments/:comment_id', () => {
-    it('status:202 responds with an object with votes incremented', () => {
+    it('status:200 responds with an object with votes incremented', () => {
       return request(app)
         .patch('/api/comments/2')
         .send({ inc_votes: 1 })
-        .expect(202)
+        .expect(200)
         .then(({body}) => {
           expect(body).to.be.an('object')
           expect(body.votes).to.equal(15)
@@ -159,7 +171,7 @@ describe.only('/api', () => {
       return request(app)
       .patch('/api/comments/2')
       .send({inc_votes: -1})
-      .expect(202)
+      .expect(200)
       .then(({body})=> {
         expect(body.comment_id).to.equal(2)
         expect(body.votes).to.equal(13);
