@@ -28,7 +28,7 @@ describe.only('/api', () => {
       });
     })
   })
-  describe('ERRORS ->/api/topics', () => {
+  describe('ERRORS ->/topics', () => {
     it('status:404 for invalid url spelling', () => {
       return request(app)
         .get('/api/topic')
@@ -105,6 +105,71 @@ describe.only('/api', () => {
         .then(({ body }) => {
         expect(body.votes).to.equal(99);
       })
+    })
+  })
+  describe('ERRORS ->/articles/:article_id', () => {
+    it('status:404 correct id type but no article with the id', () => {
+      return request(app)
+        .get('/api/articles/222222/')
+        .expect(404)
+        .then(({error : {text}}) => {
+          expect(text).to.equal('No article found for article_id: 222222')
+        })
+    })
+    it('status:400 if id is not an integer', () => {
+      return request(app)
+        .get('/api/articles/two')
+        .expect(400)
+        .then(({body : {msg}}) => {
+          expect(msg).to.equal('invalid input syntax for type integer: "two"');
+        });
+    });
+    it('status:400 if there is no object passed as body', () => {
+      return request(app)
+        .patch('/api/articles/2')
+        .send()
+        .expect(400)
+        .then(({error : {text}}) => {
+          expect(text).to.equal('Please provide a body following the format: {inc_votes : 1}, if you provide multiple key values of this format in one body, the last one will be used');
+        });                     
+    })
+    it('status:400 if the vote data type is wrong', () => {
+      return request(app)
+        .patch('/api/articles/2')
+        .send({inc_votes : "two"})
+        .expect(400)
+        .then(({body: {msg}}) => {
+          expect(msg).to.equal('invalid input syntax for type integer: "NaN"')
+        })
+    })
+    it('status:404 if the id is correct data type by does not exist', () => {
+      return request(app)
+        .patch('/api/articles/222222')
+        .send({ inc_votes: 2})
+        .expect(404)
+        .then(({error: {text}}) => {
+          expect(text).to.equal('There is no current article with the provided id');
+        })
+    })
+    it('status:422 if the body provided has two or more key value pairs of different key names', () => {
+      return request(app)
+        .patch('/api/articles/2')
+        .send({ inc_votes: 2,  inc: 3 })
+        .expect(422)
+        .then(({error : {text}}) => {
+          expect(text).to.equal('Please provide a single object body following the format: { inc_votes: 2}')
+        })
+    })
+    it('status:405 method not allowed', () => {
+      const invalidMethods = ['post', 'put', 'delete'];
+      const methodPromises = invalidMethods.map(method => {
+        return request(app)[method]('/api/articles/2')
+          .expect(405)
+          .then(({ body: { msg } }) => {
+            expect(msg).to.equal('Unfortunately this method is not allowed with this route');
+          })
+      })
+      return Promise.all(methodPromises);
     })
   }) 
   describe('/api/articles/:article_id/comments', () => {

@@ -12,6 +12,8 @@ exports.getArticleById = (req, res, next) => {
 
 exports.changeArticleById = (req, res, next) => {
   const {body : {inc_votes}} = req
+  if(Object.keys(req.body).length > 1)
+    return res.status(422).send('Please provide a single object body following the format: { inc_votes: 2}');
   const { article_id } = req.params;
   updateArticleById(inc_votes, article_id)
   .then(article => res.status(200).send(article))

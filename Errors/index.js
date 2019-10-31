@@ -5,7 +5,10 @@ const createErrMessage = (err) => {
 }
 
 exports.handleCustomErrors = (err, req, res, next) => {
-  res.status(404).send(err.msg);
+  if (err.status)
+  res.status(err.status).send(err.msg);
+  else
+  next(err)
 }
 
 exports.psqlErrorHandler = (err, req, res, next) => {
@@ -13,9 +16,12 @@ exports.psqlErrorHandler = (err, req, res, next) => {
   "42703" : {
    status : 400,
    msg: createErrMessage(err)
+  },
+  "22P02" : {
+    status : 400,
+    msg: createErrMessage(err)
   }
  };
-
 
  const triggeredError = psqlErrors[err.code];
  if (triggeredError) {

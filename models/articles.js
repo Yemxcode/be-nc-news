@@ -7,23 +7,37 @@ exports.fetchArticleById = (id) => {
   .where('articles.article_id', '=', id)
   .count({comment_count : 'comments.article_id'})
   .leftJoin('comments', 'comments.article_id', 'articles.article_id')
-  .groupBy('articles.article_id').then(([article]) => {
-  if (!article) {
-   return Promise.reject({
-    status: 404,
-    msg: `No article found for article_id: ${id}`
-   });
-  }
-  return article;
- });
+  .groupBy('articles.article_id')
+  .then(([article]) => {
+    if (!article) {
+    return Promise.reject({
+      status: 404,
+      msg: `No article found for article_id: ${id}`
+    });
+    }
+    return article;
+  });
 }
 
 exports.updateArticleById = (vote, id) => {
+  if (!vote) {
+    return Promise.reject({
+      status: 400,
+      msg: `Please provide a body following the format: {inc_votes : 1}, if you provide multiple key values of this format in one body, the last one will be used`
+    });
+  }
+
   return knex('articles')
   .where({article_id : id})
   .increment('votes', vote)
   .returning('*')
   .then(([article]) => {
+    if (!article) {
+      return Promise.reject({
+        status: 404,
+        msg: 'There is no current article with the provided id'
+      });
+    }
    return article;
   });
 }
