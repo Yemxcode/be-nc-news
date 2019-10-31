@@ -114,31 +114,31 @@ describe.only('/api', () => {
       return request(app)
         .get('/api/articles')
         .expect(200)
-        .then(({body}) => {
-          expect(body).to.be.an('array');
+        .then(({body : {articles}}) => {
+          expect(articles).to.be.an('array');
         })
     })
     it('articles contain the valid keys, and defaults to sort_by date order desc', () => {
       return request(app)
         .get('/api/articles')
         .expect(200)
-        .then(({ body }) => {
-          body.forEach(article =>
+        .then(({ body: { articles } }) => {
+          articles.forEach(article =>
             expect(article).to.contain.keys('author', 'title', 'article_id', 'topic', 'created_at', 'votes', 'comment_count')
           )
-          expect(body).to.be.descendingBy('created_at');
+          expect(articles).to.be.descendingBy('created_at');
         })
     })
     it('accepts queries, sort_by, order, author, topic', () => {
       return request(app)
         .get('/api/articles?sort_by=title&order=asc&author=icellusedkars&topic=mitch')
         .expect(200)
-        .then(({body}) => {
-          expect(body).to.be.ascendingBy('title');
-          body.forEach(article => 
+        .then(({ body: { articles } }) => {
+          expect(articles).to.be.ascendingBy('title');
+          articles.forEach(article => 
             expect(article.topic).to.equal('mitch')
           )
-          body.forEach(article =>  
+          articles.forEach(article =>  
             expect(article.author).to.equal('icellusedkars')
           )
         })
