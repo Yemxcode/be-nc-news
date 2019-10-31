@@ -8,7 +8,7 @@ articlesRouter.route('/').get(getArticles);
 
 articlesRouter.route('/:article_id').get(getArticleById).patch(changeArticleById).all(send405Errors);
 
-articlesRouter.route('/:article_id/comments').post(postCommentById).get(getCommentsById);
+articlesRouter.route('/:article_id/comments').post(postCommentById).get(getCommentsById).all(send405Errors);
 
 
 module.exports = articlesRouter;

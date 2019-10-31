@@ -199,7 +199,7 @@ describe.only('/api', () => {
     })
     it('status:200 responds with an array sorted by query', () => {
       return request(app)
-        .get('/api/articles/1/comments?sort_by=votes&order_by=desc')
+        .get('/api/articles/1/comments?sort_by=votes&order=desc')
         .expect(200)
         .then(({body}) => {
           expect(body).to.be.descendingBy('votes');
@@ -207,6 +207,75 @@ describe.only('/api', () => {
         })
     })
   }) 
+  describe('ERRORS ->/articles/:article_id/comments', () => {
+    it('status:404 incorrect url', () => {
+      return request(app)
+        .post('/api/articles/2/comment')
+        .send({ username: 'rogersop', body: 'You call this an article?' })
+        .expect(404)
+        .then(({body : {msg}}) => {
+          expect(msg).to.equal("Route Not found :/, Please check the spelling of the URL and try again. Thank you :D")
+        })
+    })
+    it('status:422 passed body is wrong data type', () => {
+      return request(app)
+        .post('/api/articles/2/comments')
+        .send({ username: 'rogersop', body: 'You call this an article?', another: 1234})
+        .expect(422)
+        .then(({ error: { text } }) => {
+          expect(text).to.equal("Please provide a single object body following the format: { username: '*Your Username*', body: '*Your comment*'}, if multiple key value of this format is provided in one object, the last will be accepted")
+        })
+    })
+    it('status:200 responds with empty object if there is an article with no comment', () => {
+      return request(app)
+        .get('/api/articles/2/comments')
+        .expect(200)
+        .then(({body}) => {
+          expect(body).to.be.an('array').that.is.empty
+        })
+    })
+    it('status:400 responds psql error if id is wrong data type', () => {
+      return request(app)
+        .get('/api/articles/two/comments')
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).to.equal('invalid input syntax for type integer: "two"')
+        })
+    })
+    it('status:400 psql column not found', () => {
+      return request(app)
+        .get('/api/articles/2/comments?sort_by=fake')
+        .expect(400)
+        .then(({body: {msg}}) => {
+          expect(msg).to.equal('column "fake" does not exist')
+        })
+    })
+    it('status:400 invalid order', () => {
+      return request(app)
+        .get('/api/articles/1/comments?sort_by=votes&order=whatever')
+        .expect(400)
+        .then(({error : {text}}) => {
+          expect(text).to.equal(`Cannot use order whatever, has to be either 'asc' or 'desc'`)
+        })
+    })
+    it('status:422 insufficient body', () => {
+      return request(app)
+        .post('/api/articles/2/comments')
+        .send({ username: 'rogersop'})
+        .expect(422)
+    })
+    it('status:405 method not allowed', () => {
+      const invalidMethods = ['patch', 'put', 'delete'];
+      const methodPromises = invalidMethods.map(method => {
+        return request(app)[method]('/api/articles/2/comments')
+          .expect(405)
+          .then(({ body: { msg } }) => {
+            expect(msg).to.equal('Unfortunately this method is not allowed with this route');
+          })
+      })
+      return Promise.all(methodPromises);
+    })
+  })
   describe('/api/articles', () => {
     it('status:200 responds with array of articles', () => {
       return request(app)
