@@ -37,35 +37,17 @@ exports.updateArticleById = (vote = 0, id) => {
 };
 
 exports.insertCommentById = (id, user, comment) => {
-  const validateId = knex('articles').where('article_id', id).then(article => article);
-  const validateUser = knex("users")
-    .where("username", user)
-    .returning("*");
-  return validateUser.then(([user]) => {
-    if (user)
       return knex("comments")
-        .insert({ body: comment, author: user.username, article_id: id })
+        .insert({ body: comment, author: user, article_id: id })
         .returning("*")
-        .then(([comment]) => {
-          if( !validateId.then(response => response)){
-            return Promise.reject({
-              status: 404,
-              msg: `No user found for article id: ${id}`
-            });
-          }
+        .then(([comment]) => { 
             return comment
         })
-    else
-      return Promise.reject({
-        status: 404,
-        msg: `No user found for username: ${user}`
-      });
-  });
 };
 
 exports.fetchCommentsById = (id, sort ="created_at", order = "desc") => {
-  const validateArticle = () => { return knex('articles').where('article_id', id).then(article => {
-    if (!article.length) {
+  const validateArticle = () => { return knex('articles').where('article_id', id).then(([article]) => {
+    if (!article) {
       return Promise.reject({
         status: 404,
         msg: `There is no article by the id ${id}`
@@ -86,8 +68,8 @@ exports.fetchCommentsById = (id, sort ="created_at", order = "desc") => {
     .orderBy(sort, order)
     .then(comments => {
       if (!comments.length) {
-        return promise = Promise.all([validateArticle()])}
-      return comments;
+        return  Promise.all([comments, validateArticle()])}
+      return [comments];
     });
 };
 
@@ -147,7 +129,7 @@ exports.fetchArticles = (sort = "articles.created_at", order = "desc", author, t
     .returning("*")
     .then((articles) => {
       if(!articles.length){
-        return promises = Promise.all([[], validateTopic(), validateAuthor()])}
+        return promises = Promise.all([[], validateTopic(), validateAuthor()]).then(([arr]) => arr)}
     return articles
     })
 };

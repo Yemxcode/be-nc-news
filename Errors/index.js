@@ -12,7 +12,6 @@ exports.handleCustomErrors = (err, req, res, next) => {
 }
 
 exports.psqlErrorHandler = (err, req, res, next) => {
- 
  const psqlErrors = {
   "42703" : {
    status : 400,
@@ -24,6 +23,10 @@ exports.psqlErrorHandler = (err, req, res, next) => {
   },
   "23503" : {
     status : 404,
+    msg: createErrMessage(err)
+  },
+  "23502" : {
+    status: 400,
     msg: createErrMessage(err)
   }
  };

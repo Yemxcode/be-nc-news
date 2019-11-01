@@ -385,6 +385,7 @@ describe.only('/api', () => {
         .expect(200)
         .then(({ body: { comment } }) => {
           expect(comment).to.be.an('object')
+
         })
     })
     it('Responds with the comment with the comment id passed and vote decremented', () => {
@@ -431,6 +432,12 @@ describe.only('/api', () => {
         .patch('/api/comments/2')
         .send({ inc_votes: 2, inc: 3 })
         .expect(422)
+    })
+    it('status:400 if not valid id', () => {
+      return request(app)
+        .patch('/api/comments/two')
+        .send({ inc_votes: 2})
+        .expect(400)
     })
     it('status:405 method not allowed', () => {
       const invalidMethods = ['get','post', 'put'];
