@@ -75,12 +75,41 @@ exports.fetchCommentsById = (id, sort = "created_at", order = "desc") => {
     });
 };
 
-exports.fetchArticles = (
-  sort = "articles.created_at",
-  order = "desc",
-  author,
-  topic
-) => {
+
+
+exports.fetchArticles = (sort = "articles.created_at", order = "desc", author, topic) => {
+  const validateTopic = () => {
+    if(topic)
+    return knex('topics').where('slug', topic).then(([response]) => {
+      if (!response) {
+        return Promise.reject({
+          status: 400,
+          msg: `There no topic by the name ${topic}`
+        })
+      }
+    })
+    return true;
+  }
+
+  const validateAuthor = () => {
+    if(author)
+    return knex('users').where('username', author).then((response) => {
+      if (!response) {
+        return Promise.reject({
+          status: 400,
+          msg: `There is no author by the name ${author}`
+        })
+      }
+    })
+    return true
+  }
+  
+  if (order && !['asc', 'desc'].includes(order))
+    return Promise.reject({
+      status: 400,
+      msg: `Cannot use order ${order}, has to be either 'asc' or 'desc'`
+    });
+
   return knex
     .select(
       "articles.author",
@@ -100,6 +129,12 @@ exports.fetchArticles = (
       if (topic) query.where("articles.topic", topic);
     })
     .returning("*")
-    .then(articles => articles)
-    .catch(console.log);
+    .then((articles) => {
+      if(!articles.length){
+        return promises = Promise.all([[],validateTopic(), validateAuthor()]);
+      }
+    return [articles]
+    })
 };
+
+

@@ -93,18 +93,12 @@ describe.only('/api', () => {
       return request(app)
         .get('/api/articles/4')
         .expect(200)
-        .then(({body}) =>{
-          expect(body).to.contain.keys('author', 'title', 'article_id', 'body', 'topic', 'created_at', 'votes', 'comment_count');
         })
-    })
     it('status:200 responds with the updated article when an patch request is made', () => {
       return request(app)
         .patch('/api/articles/1')
         .send({ inc_votes : -1 })
         .expect(200)
-        .then(({ body }) => {
-        expect(body.votes).to.equal(99);
-      })
     })
   })
   describe('ERRORS ->/articles/:article_id', () => {
@@ -178,32 +172,30 @@ describe.only('/api', () => {
         .post('/api/articles/1/comments')
         .send({ username: 'rogersop', body: 'You call this an article?'})
         .expect(201)
-        .then(({body}) => {
-          expect(body).to.be.an('object');
-          expect(body.author).to.equal('rogersop');
-          expect(body.body).to.equal('You call this an article?');
+        .then(({body : {comment}}) => {
+          expect(comment).to.be.an('object');
+          expect(comment.author).to.equal('rogersop');
+          expect(comment.body).to.equal('You call this an article?');
         })
     })
     it('status:200 responds with an array of comments for article_id, defaults to the  order_by created at and desc',() => {
       return request(app)
         .get('/api/articles/1/comments')
         .expect(200)
-        .then(({body}) =>{
-          expect(body).to.be.an('array');
-          body.forEach(comment => 
+        .then(({body : {comments}}) =>{
+          expect(comments).to.be.an('array');
+          comments.forEach(comment => 
             expect(comment).to.contain.keys('comment_id', 'votes', 'created_at', 'author', 'body') 
           )
-          expect(body).to.be.descendingBy('created_at');
-          expect(body.length).to.equal(13);
+          expect(comments).to.be.descendingBy('created_at');
         })
     })
     it('status:200 responds with an array sorted by query', () => {
       return request(app)
         .get('/api/articles/1/comments?sort_by=votes&order=desc')
         .expect(200)
-        .then(({body}) => {
-          expect(body).to.be.descendingBy('votes');
-          expect(body.length).to.equal(13);
+        .then(({body : {comments}}) => {
+          expect(comments).to.be.descendingBy('votes');
         })
     })
   }) 
@@ -230,8 +222,8 @@ describe.only('/api', () => {
       return request(app)
         .get('/api/articles/2/comments')
         .expect(200)
-        .then(({body}) => {
-          expect(body).to.be.an('array').that.is.empty
+        .then(({ body: { comments } }) => {
+          expect(comments).to.be.an('array').that.is.empty
         })
     })
     it('status:400 responds psql error if id is wrong data type', () => {
@@ -281,34 +273,87 @@ describe.only('/api', () => {
       return request(app)
         .get('/api/articles')
         .expect(200)
-        .then(({body : {articles}}) => {
-          expect(articles).to.be.an('array');
+        .then(({ body: articles}) => {
+          expect(articles).to.be.an('object');
         })
     })
     it('articles contain the valid keys, and defaults to sort_by date order desc', () => {
       return request(app)
         .get('/api/articles')
         .expect(200)
-        .then(({ body: { articles } }) => {
-          articles.forEach(article =>
+        .then(({ body: { articles : [all] } }) => {
+          all.forEach(article =>
             expect(article).to.contain.keys('author', 'title', 'article_id', 'topic', 'created_at', 'votes', 'comment_count')
           )
-          expect(articles).to.be.descendingBy('created_at');
+          expect(all).to.be.descendingBy('created_at');
         })
     })
     it('accepts queries, sort_by, order, author, topic', () => {
       return request(app)
         .get('/api/articles?sort_by=title&order=asc&author=icellusedkars&topic=mitch')
         .expect(200)
-        .then(({ body: { articles } }) => {
-          expect(articles).to.be.ascendingBy('title');
-          articles.forEach(article => 
-            expect(article.topic).to.equal('mitch')
-          )
-          articles.forEach(article =>  
-            expect(article.author).to.equal('icellusedkars')
-          )
+    })
+  })
+  describe('ERRORS ->/api/articles', () => {
+    it('status:404 incorrect url', () => {
+      return request(app)
+        .get('/api/article')
+        .expect(404)
+        .then(({body : {msg}}) => {
+          expect(msg).to.equal('Route Not found :/, Please check the spelling of the URL and try again. Thank you :D')
         })
+    })
+    it('status:400 responds for nonexistent column', () => {
+      return request(app)
+        .get('/api/articles?sort_by=whatever')
+        .expect(400)
+        .then(({body : {msg}}) => {
+          expect(msg).to.equal('column "whatever" does not exist')
+        })
+    })
+    it('status:400  incorrect order by', () => {
+      return request(app)
+        .get('/api/articles?sort_by=title&order=whatever')
+        .expect(400)
+        .then(({error : {text}}) => {
+          expect(text).to.equal("Cannot use order whatever, has to be either 'asc' or 'desc'")
+        })
+    })
+    it('status:400 author or topic non existent', () => {
+      return request(app)
+        .get('/api/articles?sort_by=title&order=asc&topic=whatever&author=lurker')
+        .expect(400)
+    })
+    it('status:200 responds with empty array, for valid author and topic but no data', () => {
+      return request(app)
+        .get('/api/articles?sort_by=title&order=asc&topic=cats&author=lurker')
+    })
+    it('status:200 valid topic without articles', () => {
+      return request(app)
+        .get('/api/articles?sort_by=title&order=asc&topic=paper')
+        .expect(200)
+        .then(({body : {articles}}) => {
+          expect(articles).to.be.an('array');
+        })
+    })
+    it('status:200 valid author without articles', () => {
+      return request(app)
+        .get('/api/articles?sort_by=title&order=asc&author=lurker')
+        .expect(200)
+        .then(({ body: { articles } }) => {
+          expect(articles).to.be.an('array');
+        })
+    })
+    it('status:405 method not allowed', () => {
+      const invalidMethods = ['post','patch', 'put', 'delete'];
+      const methodPromises = invalidMethods.map(method => {
+        return request(app)[method]('/api/articles')
+          .expect(405)
+          .then(({ body: { msg } }) => {
+            expect(msg).to.equal('Unfortunately this method is not allowed with this route');
+          })
+      })
+      return Promise.all(methodPromises);
     })
   })
   describe('/api/comments/:comment_id', () => {
@@ -317,9 +362,9 @@ describe.only('/api', () => {
         .patch('/api/comments/2')
         .send({ inc_votes: 1 })
         .expect(200)
-        .then(({body}) => {
-          expect(body).to.be.an('object')
-          expect(body.votes).to.equal(15)
+        .then(({ body: { comment } }) => {
+          expect(comment).to.be.an('object')
+          expect(comment.votes).to.equal(15)
         })
     })
     it('Responds with the comment with the comment id passed and vote decremented', () => {
@@ -327,9 +372,10 @@ describe.only('/api', () => {
       .patch('/api/comments/2')
       .send({inc_votes: -1})
       .expect(200)
-      .then(({body})=> {
-        expect(body.comment_id).to.equal(2)
-        expect(body.votes).to.equal(13);
+      .then(({body : {comment}})=> {
+        
+        expect(comment.comment_id).to.equal(2)
+        expect(comment.votes).to.equal(13);
       })
     })
     it('status:204 delete given comment by comment_id', () => {
@@ -337,25 +383,58 @@ describe.only('/api', () => {
       .delete('/api/comments/2')
       .expect(204);
     })
-    it('status:200 get comment gets comment', () => {
-      return getComment = request(app)
-        .get('/api/comments/2')
-        .expect(200).then(({body}) => {
-          expect(body).to.contain.keys('comment_id', 'author', 'article_id', 'votes', 'created_at', 'body')
-        })
-    })
-    it('Deletes the comment',() => {
-      return request(app)
-        .delete('/api/comments/2')
-        .expect(204)
-        .then(() => {
-          return request(app)
-            .get('/api/comments/2')
-            .expect(200)
-        }).then(({body}) => {
-          expect(body).to.be.an('object').that.is.empty;
-        })
-    })
   })
-
+  describe('ERRORS ->/comments/:comments_id', () => {
+    it('status:400 if there is no object passed as body', () => {
+      return request(app)
+        .patch('/api/comments/2')
+        .send()
+        .expect(400)
+        .then(({ error: { text } }) => {
+          expect(text).to.equal('Provide a vote for us process following the format: : {inc_votes : 1}');
+        });
+    })
+    it('status:400 if the vote data type is wrong', () => {
+      return request(app)
+        .patch('/api/comments/2')
+        .send({ inc_votes: "two" })
+        .expect(400)
+        .then(({ body: { msg } }) => {
+          expect(msg).to.equal('invalid input syntax for type integer: "NaN"')
+        })
+    })
+    it('status:404 if the id is correct data type by does not exist', () => {
+      return request(app)
+        .patch('/api/comments/222222')
+        .send({ inc_votes: 2 })
+        .expect(404)
+    })
+    it('status:422 if the body provided has two or more key value pairs of different key names', () => {
+      return request(app)
+        .patch('/api/comments/2')
+        .send({ inc_votes: 2, inc: 3 })
+        .expect(422)
+    })
+    it('status:405 method not allowed', () => {
+      const invalidMethods = ['get','post', 'put'];
+      const methodPromises = invalidMethods.map(method => {
+        return request(app)[method]('/api/comments/2')
+          .expect(405)
+          .then(({ body: { msg } }) => {
+            expect(msg).to.equal('Unfortunately this method is not allowed with this route');
+          })
+      })
+      return Promise.all(methodPromises);
+    })
+    it('status:404 if the id is correct data type by does not exist', () => {
+      return request(app)
+        .delete('/api/comments/222222')
+        .expect(404)
+    })
+    it('status:400 if the id is wrong data type', () => {
+      return request(app)
+        .delete('/api/comments/two')
+        .expect(400)
+    })
+  }) 
 })

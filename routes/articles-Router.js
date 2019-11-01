@@ -4,7 +4,7 @@ const {send405Errors} = require('../Errors/index')
 
 
 
-articlesRouter.route('/').get(getArticles);
+articlesRouter.route('/').get(getArticles).all(send405Errors);
 
 articlesRouter.route('/:article_id').get(getArticleById).patch(changeArticleById).all(send405Errors);
 

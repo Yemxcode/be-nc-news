@@ -6,7 +6,7 @@ const {fetchArticles, fetchArticleById, updateArticleById, insertCommentById, fe
 exports.getArticleById = (req, res, next) => {
   const { article_id } = req.params;
   fetchArticleById(article_id)
-  .then(article => res.status(200).send(article))
+  .then(article => res.status(200).send({article}))
   .catch(next);
 }
 
@@ -16,7 +16,7 @@ exports.changeArticleById = (req, res, next) => {
     return res.status(422).send('Please provide a single object body following the format: { inc_votes: 2}');
   const { article_id } = req.params;
   updateArticleById(inc_votes, article_id)
-  .then(article => res.status(200).send(article))
+  .then(article => res.status(200).send({article}))
   .catch(next);
 }
 
@@ -29,7 +29,7 @@ exports.postCommentById = (req, res, next) => {
   if (Object.keys(req.body).length > 2)
     return res.status(422).send("Please provide a single object body following the format: { username: '*Your Username*', body: '*Your comment*'}, if multiple key value of this format is provided in one object, the last will be accepted");
   insertCommentById(article_id, username, body)
-  .then(comment => res.status(201).send(comment))
+  .then(comment => res.status(201).send({comment}))
   .catch(next);
 }
 
@@ -37,7 +37,7 @@ exports.getCommentsById = (req, res, next) => {
   const {article_id} = req.params;
   const {sort_by, order} = req.query;
   fetchCommentsById(article_id, sort_by, order)
-  .then(comments => res.status(200).send(comments))
+  .then(comments => res.status(200).send({comments}))
   .catch(next);
 }
 
@@ -45,6 +45,7 @@ exports.getCommentsById = (req, res, next) => {
 exports.getArticles = (req, res, next) => {
   const {sort_by, order, author, topic} = req.query;
   fetchArticles(sort_by, order, author, topic)
-    .then(articles => res.status(200).send({articles}))
+    .then(articles => {
+      res.status(200).send({articles})})
     .catch(next);
 }
