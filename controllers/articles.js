@@ -24,10 +24,8 @@ exports.changeArticleById = (req, res, next) => {
 exports.postCommentById = (req, res, next) => {
   const {article_id} = req.params
   const {username, body} = req.body;
-  if(Object.keys(req.body).length <= 1)
-    return res.status(422).send("Please ensure you provide username and body following the format: : { username: ' * Your Username * ', body: ' * Your comment *'}")
-  if (Object.keys(req.body).length > 2)
-    return res.status(422).send("Please provide a single object body following the format: { username: '*Your Username*', body: '*Your comment*'}, if multiple key value of this format is provided in one object, the last will be accepted");
+  if (!body)
+    return res.status(400).send("Please provide a single object body following the format: { username: '*Your Username*', body: '*Your comment*'}, if multiple key value of this format is provided in one object, the last will be accepted");
   insertCommentById(article_id, username, body)
   .then(comment => res.status(201).send({comment}))
   .catch(next);

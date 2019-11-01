@@ -118,14 +118,11 @@ describe.only('/api', () => {
           expect(msg).to.equal('invalid input syntax for type integer: "two"');
         });
     });
-    it('status:400 if there is no object passed as body', () => {
+    it('status:200 if there is no object passed as body', () => {
       return request(app)
         .patch('/api/articles/2')
         .send()
-        .expect(400)
-        .then(({error : {text}}) => {
-          expect(text).to.equal('Please provide a body following the format: {inc_votes : 1}, if you provide multiple key values of this format in one body, the last one will be used');
-        });                     
+        .expect(200)                
     })
     it('status:400 if the vote data type is wrong', () => {
       return request(app)
@@ -209,22 +206,26 @@ describe.only('/api', () => {
           expect(msg).to.equal("Route Not found :/, Please check the spelling of the URL and try again. Thank you :D")
         })
     })
-    it('status:422 passed body is wrong data type', () => {
+    it('status:404 Not Found when given a valid `article_id` that does not exist', () => {
+      return request(app)
+        .get('/api/articles/222222/comments')
+        .expect(404)
+    })
+    it('status:400: Bad Request status code when `POST` request does not include all the required keys', () => {
       return request(app)
         .post('/api/articles/2/comments')
-        .send({ username: 'rogersop', body: 'You call this an article?', another: 1234})
-        .expect(422)
-        .then(({ error: { text } }) => {
-          expect(text).to.equal("Please provide a single object body following the format: { username: '*Your Username*', body: '*Your comment*'}, if multiple key value of this format is provided in one object, the last will be accepted")
-        })
+        .expect(400)
+    })
+    it('status:404:  code when `POST` contains a valid article ID that does not exist', () =>{
+      return request(app)
+        .post('/api/articles/2222/comments')
+        .send({ username: 'rogersop', body: 'You call this an article?'})
+        .expect(404);
     })
     it('status:200 responds with empty object if there is an article with no comment', () => {
       return request(app)
         .get('/api/articles/2/comments')
         .expect(200)
-        .then(({ body: { comments } }) => {
-          expect(comments).to.be.an('array').that.is.empty
-        })
     })
     it('status:400 responds psql error if id is wrong data type', () => {
       return request(app)
@@ -250,11 +251,11 @@ describe.only('/api', () => {
           expect(text).to.equal(`Cannot use order whatever, has to be either 'asc' or 'desc'`)
         })
     })
-    it('status:422 insufficient body', () => {
+    it('status:400 insufficient body', () => {
       return request(app)
         .post('/api/articles/2/comments')
         .send({ username: 'rogersop'})
-        .expect(422)
+        .expect(400)
     })
     it('status:405 method not allowed', () => {
       const invalidMethods = ['patch', 'put', 'delete'];
@@ -274,18 +275,18 @@ describe.only('/api', () => {
         .get('/api/articles')
         .expect(200)
         .then(({ body: articles}) => {
-          expect(articles).to.be.an('object');
+          expect(articles).to.be.an('object')
         })
     })
     it('articles contain the valid keys, and defaults to sort_by date order desc', () => {
       return request(app)
         .get('/api/articles')
         .expect(200)
-        .then(({ body: { articles : [all] } }) => {
-          all.forEach(article =>
+        .then(({ body: { articles } }) => {
+          articles.forEach(article =>
             expect(article).to.contain.keys('author', 'title', 'article_id', 'topic', 'created_at', 'votes', 'comment_count')
           )
-          expect(all).to.be.descendingBy('created_at');
+          expect(articles).to.be.descendingBy('created_at');
         })
     })
     it('accepts queries, sort_by, order, author, topic', () => {
@@ -319,10 +320,21 @@ describe.only('/api', () => {
           expect(text).to.equal("Cannot use order whatever, has to be either 'asc' or 'desc'")
         })
     })
-    it('status:400 author or topic non existent', () => {
+    it('status:404 author or topic non existent', () => {
       return request(app)
         .get('/api/articles?sort_by=title&order=asc&topic=whatever&author=lurker')
-        .expect(400)
+        .expect(404)
+    })
+    it('status:404 provided only topic that does not exist', () => 
+    {
+      return request(app)
+        .get('/api/articles?sort_by=title&order=asc&topic=whatever')
+        .expect(404)
+    })
+    it('status:404 provided only author that does not exist', () => {
+      return request(app)
+        .get('/api/articles?sort_by=title&order=asc&author=whatever')
+        .expect(404)
     })
     it('status:200 responds with empty array, for valid author and topic but no data', () => {
       return request(app)
@@ -367,6 +379,14 @@ describe.only('/api', () => {
           expect(comment.votes).to.equal(15)
         })
     })
+    it('status:200 responds with unchanged comment when no `inc_votes` is provided in the request body', () => {
+      return request(app)
+        .patch('/api/comments/2')
+        .expect(200)
+        .then(({ body: { comment } }) => {
+          expect(comment).to.be.an('object')
+        })
+    })
     it('Responds with the comment with the comment id passed and vote decremented', () => {
       return request(app)
       .patch('/api/comments/2')
@@ -385,14 +405,11 @@ describe.only('/api', () => {
     })
   })
   describe('ERRORS ->/comments/:comments_id', () => {
-    it('status:400 if there is no object passed as body', () => {
+    it('status:200 if there is no object passed as body', () => {
       return request(app)
         .patch('/api/comments/2')
         .send()
-        .expect(400)
-        .then(({ error: { text } }) => {
-          expect(text).to.equal('Provide a vote for us process following the format: : {inc_votes : 1}');
-        });
+        .expect(200)
     })
     it('status:400 if the vote data type is wrong', () => {
       return request(app)

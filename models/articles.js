@@ -19,13 +19,7 @@ exports.fetchArticleById = id => {
     });
 };
 
-exports.updateArticleById = (vote, id) => {
-  if (!vote) {
-    return Promise.reject({
-      status: 400,
-      msg: `Please provide a body following the format: {inc_votes : 1}, if you provide multiple key values of this format in one body, the last one will be used`
-    });
-  }
+exports.updateArticleById = (vote = 0, id) => {
 
   return knex("articles")
     .where({ article_id: id })
@@ -43,6 +37,7 @@ exports.updateArticleById = (vote, id) => {
 };
 
 exports.insertCommentById = (id, user, comment) => {
+  const validateId = knex('articles').where('article_id', id).then(article => article);
   const validateUser = knex("users")
     .where("username", user)
     .returning("*");
@@ -51,7 +46,15 @@ exports.insertCommentById = (id, user, comment) => {
       return knex("comments")
         .insert({ body: comment, author: user.username, article_id: id })
         .returning("*")
-        .then(([comment]) => comment);
+        .then(([comment]) => {
+          if( !validateId.then(response => response)){
+            return Promise.reject({
+              status: 404,
+              msg: `No user found for article id: ${id}`
+            });
+          }
+            return comment
+        })
     else
       return Promise.reject({
         status: 404,
@@ -60,7 +63,18 @@ exports.insertCommentById = (id, user, comment) => {
   });
 };
 
-exports.fetchCommentsById = (id, sort = "created_at", order = "desc") => {
+exports.fetchCommentsById = (id, sort ="created_at", order = "desc") => {
+  const validateArticle = () => { return knex('articles').where('article_id', id).then(article => {
+    if (!article.length) {
+      return Promise.reject({
+        status: 404,
+        msg: `There is no article by the id ${id}`
+      })
+    }
+    return article
+    })
+  }
+
   if (order && !['asc', 'desc'].includes(order))
     return Promise.reject({
       status: 400,
@@ -71,6 +85,8 @@ exports.fetchCommentsById = (id, sort = "created_at", order = "desc") => {
     .returning("*")
     .orderBy(sort, order)
     .then(comments => {
+      if (!comments.length) {
+        return promise = Promise.all([validateArticle()])}
       return comments;
     });
 };
@@ -83,7 +99,7 @@ exports.fetchArticles = (sort = "articles.created_at", order = "desc", author, t
     return knex('topics').where('slug', topic).then(([response]) => {
       if (!response) {
         return Promise.reject({
-          status: 400,
+          status: 404,
           msg: `There no topic by the name ${topic}`
         })
       }
@@ -93,10 +109,10 @@ exports.fetchArticles = (sort = "articles.created_at", order = "desc", author, t
 
   const validateAuthor = () => {
     if(author)
-    return knex('users').where('username', author).then((response) => {
+    return knex('users').where('username', author).then(([response]) => {
       if (!response) {
         return Promise.reject({
-          status: 400,
+          status: 404,
           msg: `There is no author by the name ${author}`
         })
       }
@@ -131,9 +147,8 @@ exports.fetchArticles = (sort = "articles.created_at", order = "desc", author, t
     .returning("*")
     .then((articles) => {
       if(!articles.length){
-        return promises = Promise.all([[],validateTopic(), validateAuthor()]);
-      }
-    return [articles]
+        return promises = Promise.all([[], validateTopic(), validateAuthor()])}
+    return articles
     })
 };
 
