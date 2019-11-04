@@ -461,4 +461,11 @@ describe.only('/api', () => {
         .expect(400)
     })
   }) 
+  describe.only('Get /api', () => {
+    it('status:200 responds with JSON describing all the available endpoints on your API', () => {
+      return request(app)
+        .get('/api')
+        .expect(200)
+    })
+  })
 })

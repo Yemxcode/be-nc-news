@@ -23,5 +23,15 @@
         }
       ]
     }
+  },
+  "GET /api/users/:username": {
+    "description": "serves an object of containing username avatar_url and name",
+    "exampleResponse": {
+      "user" : {
+        "username": "YemxCode",
+        "avatar_url": "www.myurl.com",
+        "name": "Yemi"
+      }
+    }
   }
 }
