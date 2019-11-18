@@ -5,7 +5,7 @@ const {handleCustomErrors, psqlErrorHandler, handleServerErrors, RouteNotFound} 
 
 
 
-
+app.use(require('cors')())
 app.use(express.json());
 
 app.use('/api', apiRouter);
