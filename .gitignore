@@ -2,3 +2,5 @@ node_modules
 knexfile.js
 query.sql
 output.text
+error-handling.md
+hosting.md

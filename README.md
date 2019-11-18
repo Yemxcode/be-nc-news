@@ -2,7 +2,7 @@
 NC News Backend.
 
 This serves as a RESTful API for my NC News Frontend UI. 
-
+ 
 NC News is a social news page, housing articles of relative topics, social commentary, trending themes, their respective rating, and discussion. This platform has been built to inform and entertain, reminiscent of Reddit. NC News has articles which are divided into topics. Each article has user driven ratings and can be up or down voted using the API. Users can also add comments related to an an article, comments which can also be voted up or down, comments can also be removed by the author.
 
 
