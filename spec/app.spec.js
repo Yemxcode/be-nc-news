@@ -60,14 +60,6 @@ describe.only('/api', () => {
     });
   })
   describe('ERRORS ->/users/:username', () => {
-    it('status:404 wrong url', () => {
-      return request(app)
-        .get('/api/users/')
-        .expect(404)
-        .then(({ body: { msg } }) => {
-          expect(msg).to.equal('Route Not found :/, Please check the spelling of the URL and try again. Thank you :D');
-        });
-    });
     it('status:404 for invalid username', () => {
       return request(app)
         .get('/api/users/1234')
