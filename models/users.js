@@ -16,8 +16,8 @@ exports.fetchUserByUsername = (username) => {
 
 
 exports.fetchUsers = () => {
-  return connection("users")
-    .returning("*")
+  return knex("users")
+    .select("*")
     .then(res => {
       return res;
     });
