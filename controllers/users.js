@@ -1,5 +1,5 @@
 
-const {fetchUserByUsername} = require('../models/users')
+const {fetchUserByUsername, fetchUsers} = require('../models/users')
 
 
 
@@ -8,4 +8,13 @@ exports.getUserByUsername = (req, res, next) => {
   fetchUserByUsername(username)
   .then( user => res.status(200).send({user}))
   .catch(next);
+}
+
+exports.getUsers = (req, res, next) => {
+  
+  fetchUsers()
+    .then(users => {
+      res.status(200).send({ users })
+    })
+    .catch(next);
 }

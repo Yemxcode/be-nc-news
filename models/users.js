@@ -13,3 +13,12 @@ exports.fetchUserByUsername = (username) => {
    return user
   });
 };
+
+
+exports.fetchUsers = () => {
+  return connection("users")
+    .returning("*")
+    .then(res => {
+      return res;
+    });
+};
