@@ -82,7 +82,7 @@ exports.fetchArticles = (sort = "articles.created_at", order = "desc", author, t
       if (!response) {
         return Promise.reject({
           status: 404,
-          msg: `There no topic by the name ${topic}`
+          msg: `We don't currently have an article with the topic: ${topic}`
         })
       }
     })
