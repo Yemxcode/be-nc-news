@@ -50,7 +50,7 @@ exports.fetchCommentsById = (id, sort ="created_at", order = "desc") => {
     if (!article) {
       return Promise.reject({
         status: 404,
-        msg: `There is no article by the id ${id}`
+        msg: `There are no comments for article id ${id}`
       })
     }
     return article
