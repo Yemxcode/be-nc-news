@@ -135,3 +135,15 @@ exports.fetchArticles = (sort = "articles.created_at", order = "desc", author, t
 };
 
 
+exports.deleteArticleById = (id) => {
+  return knex('articles')
+    .where('article_id', id)
+    .del().then(response => {
+      if (!response) {
+        return Promise.reject({
+          status: 404,
+          msg: `There is no comment with id: ${id}`
+        });
+      }
+    })
+}

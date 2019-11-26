@@ -6,7 +6,6 @@ const commentsRouter = require('./comments-Router');
 const {send405Errors} = require('../Errors/index');
 const {sendEndPoints} = require('../controllers/api');
 
-
 apiRouter.route('/').get(sendEndPoints).all(send405Errors);
 
 apiRouter.use('/topics', topicsRouter);
