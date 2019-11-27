@@ -97,8 +97,6 @@ Future EndPoints:
 ```http
 POST /api/articles
 
-DELETE /api/articles/:article_id
-
 POST /api/topics
 
 POST /api/users
