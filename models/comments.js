@@ -8,6 +8,7 @@ exports.changeCommentVote = (vote = 0, id) => {
   .increment('votes', vote)
   .returning('*')
   .then(([comment])=> {
+    console.log('sjhsjknd')
     if(!comment){
       return Promise.reject({
         status: 404,
@@ -15,7 +16,7 @@ exports.changeCommentVote = (vote = 0, id) => {
       });
     }
    return comment;
-  })
+  }).catch(console.log)
 }
 
 

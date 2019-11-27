@@ -8,7 +8,7 @@ exports.updateCommentVote = (req, res, next) => {
  const { inc_votes } = req.body;
  if(Object.keys(req.body).length > 1){
   res.status(422).send({ msg: 'Please provide a single object body following the format: { inc_votes: 2}, if multiple are provided in one body the last will be processed'})
- }
+ } else
  changeCommentVote(inc_votes, comment_id)
  .then(comment => res.status(200).send({comment}))
  .catch(next);

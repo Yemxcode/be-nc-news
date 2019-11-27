@@ -22,3 +22,10 @@ exports.fetchUsers = () => {
       return res;
     });
 };
+
+exports.addUser = (username, avatar_url, name) => {
+  return knex('users')
+    .insert({ username, avatar_url, name})
+      .returning("*")
+        .then(([user]) => user)
+}

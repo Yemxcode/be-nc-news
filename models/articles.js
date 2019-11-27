@@ -147,3 +147,11 @@ exports.deleteArticleById = (id) => {
       }
     })
 }
+
+exports.insertArticle = (author, topic, title, body) => {
+  return knex('articles')
+    .insert({author, body, topic, title})
+      .returning("*")
+        .then(([article]) => article)
+};
+

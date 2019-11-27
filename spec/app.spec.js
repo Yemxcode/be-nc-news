@@ -38,7 +38,7 @@ describe.only('/api', () => {
         });
     });
     it('status:405 INVALID methods', () => {
-      const invalidMethods = ['post', 'patch', 'put', 'delete'];
+      const invalidMethods = ['patch', 'put', 'delete'];
       const methodPromises = invalidMethods.map(method=> {
         return request(app)[method]('/api/topics')
           .expect(405)
@@ -144,7 +144,7 @@ describe.only('/api', () => {
         })
     })
     it('status:405 method not allowed', () => {
-      const invalidMethods = ['post', 'put', 'delete'];
+      const invalidMethods = ['post', 'put'];
       const methodPromises = invalidMethods.map(method => {
         return request(app)[method]('/api/articles/2')
           .expect(405)
@@ -349,7 +349,7 @@ describe.only('/api', () => {
         })
     })
     it('status:405 method not allowed', () => {
-      const invalidMethods = ['post','patch', 'put', 'delete'];
+      const invalidMethods = ['patch', 'put', 'delete'];
       const methodPromises = invalidMethods.map(method => {
         return request(app)[method]('/api/articles')
           .expect(405)

@@ -64,40 +64,55 @@ To run tests type and run npm test in the terminal when in the repo. This will r
 
 Built With
 Express - The web framework used
-API Routes
+API Routes:
+
+
 GET
-/api Serves a json object representing all the available endpoints of the API
+/api 
+Serves a json object representing all the available endpoints of the API
 
-/api/topics Serves an array of all topics
+/api/topics 
+Serves an array of all topics
 
-/api/articles Serves an array of all articles
+/api/articles 
+Serves an array of all articles
 
-/api/users/:username Responds with a a user object with details about the given user
+/api/users
+Serves an array of all users
 
-/api/articles/:article_id Responds with an article object for the given article ID
+/api/users/:username 
+Responds with a a user object with details about the given user
 
-/api/articles/:article_id/comments When given a valid article ID, responds with an array of comments for that article
+/api/articles/:article_id 
+Responds with an article object for the given article ID
+
+/api/articles/:article_id/comments 
+When given a valid article ID, responds with an array of comments for that article
 
 PATCH
-/api/articles/:article_id Accepts an object in the form of { inc_votes: newVote} and responds with the updated article
+/api/articles/:article_id 
+Accepts an object in the form of { inc_votes: newVote} and responds with the updated article
 
-/api/comments/:comment_id Accepts an object in the form of { inc_votes: newVote} and responds with the updated comment
+/api/comments/:comment_id 
+Accepts an object in the form of { inc_votes: newVote} and responds with the updated comment
 
 POST
-/api/articles/:article_id/comments Request body accepts an object in the form of {username: 'yourUsername', body: 'text'} and responds with the posted comment
+/api/articles/:article_id/comments 
+Request body accepts an object in the form of {username: 'yourUsername', body: 'text'} and responds with the posted comment
+
+/api/topics
+Request body accepts an object in the form of {description: "", slug: ""} and responds with the posted topic
+
+/api/users
+
+
+/api/articles
+
 
 DELETE
-/api/comments/:comment_id Deletes the comment given by comment_id and responds with status 204
+/api/comments/:comment_id 
+Deletes the comment given by comment_id and responds with status 204
 
-
-Future EndPoints:
-
-#### More Routes
-
-```http
-POST /api/articles
-
-POST /api/topics
-
-POST /api/users
-```
+/api/articles/:article_id 
+Deletes the article given by article_id and responds with status 204
+  
