@@ -118,6 +118,7 @@ exports.fetchArticles = (sort = "articles.created_at", order = "desc", author, t
       "articles.votes"
     )
     .from("articles")
+    .limit(10).offset(30)
     .count({ comment_count: "comments.article_id" })
     .leftJoin("comments", "comments.article_id", "articles.article_id")
     .groupBy("articles.article_id")
