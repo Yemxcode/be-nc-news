@@ -64,6 +64,7 @@ exports.fetchCommentsById = (id, sort ="created_at", order = "desc") => {
     });
   return knex("comments")
     .where("article_id", id)
+    .limit(3).offset(0)
     .returning("*")
     .orderBy(sort, order)
     .then(comments => {
@@ -78,7 +79,9 @@ exports.fetchCommentsById = (id, sort ="created_at", order = "desc") => {
 exports.fetchArticles = (sort = "articles.created_at", order = "desc", author, topic) => {
   const validateTopic = () => {
     if(topic)
-    return knex('topics').where('slug', topic).then(([response]) => {
+    return knex('topics')
+    .where('slug', topic)
+    .then(([response]) => {
       if (!response) {
         return Promise.reject({
           status: 404,
@@ -91,7 +94,9 @@ exports.fetchArticles = (sort = "articles.created_at", order = "desc", author, t
 
   const validateAuthor = () => {
     if(author)
-    return knex('users').where('username', author).then(([response]) => {
+    return knex('users')
+    .where('username', author)
+    .then(([response]) => {
       if (!response) {
         return Promise.reject({
           status: 404,
@@ -118,7 +123,7 @@ exports.fetchArticles = (sort = "articles.created_at", order = "desc", author, t
       "articles.votes"
     )
     .from("articles")
-    .limit(10).offset(30)
+    .limit(10).offset(0)
     .count({ comment_count: "comments.article_id" })
     .leftJoin("comments", "comments.article_id", "articles.article_id")
     .groupBy("articles.article_id")
