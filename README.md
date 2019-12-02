@@ -94,19 +94,21 @@ PATCH
 Accepts an object in the form of { inc_votes: newVote} and responds with the updated article
 
 /api/comments/:comment_id 
-Accepts an object in the form of { inc_votes: newVote} and responds with the updated comment
+Accepts an object in the form of { inc_votes: newVote} and responds with the updated comment.
 
 POST
 /api/articles/:article_id/comments 
-Request body accepts an object in the form of {username: 'yourUsername', body: 'text'} and responds with the posted comment
+Request body accepts an object in the form of {username: "yourUsername", body: "This is an amazing article"} and responds with the posted comment.
 
 /api/topics
-Request body accepts an object in the form of {description: "", slug: ""} and responds with the posted topic
+Request body accepts an object in the form of {description: "The art of living like a fish", slug: "swimming"} and responds with the posted topic.
 
 /api/users
-
+Request body accepts an object in the form of { username: "TooCoolForSkool", avatar_url: "myCoolAvatar.jpeg", name: "Joe Bloggs"} and responds with the posted user.
 
 /api/articles
+
+Request body accepts an object in the form of {author: "TooCoolForSkool", body: "This is smy article", topic: "example", title: "how not to write an article"} and responds with the posted article.
 
 
 DELETE
