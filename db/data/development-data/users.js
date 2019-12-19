@@ -2,36 +2,36 @@ module.exports = [
   {
     username: 'tickle122',
     name: 'Tom Tickle',
-    avatar_url: 'https://www.spiritsurfers.net/monastery/wp-content/uploads/_41500270_mrtickle.jpg',
+    avatar_url: 'https://photos.headshotcrew.com/styles/square-large/s3/avatars/2019/09/ge_guillaumejuin19-594_2.jpg?itok=4EWBo5eK&c=7b2a2ae52f63feedee90a32afc7bb5c3',
   },
   {
     username: 'grumpy19',
     name: 'Paul Grump',
-    avatar_url: 'https://www.tumbit.com/profile-image/4/original/mr-grumpy.jpg',
+    avatar_url: 'https://www.raquelphoto.com/wp-content/uploads/cache/2018/07/0000001Image-1/2962107475.jpg',
   },
   {
     username: 'happyamy2016',
     name: 'Amy Happy',
-    avatar_url: 'https://vignette1.wikia.nocookie.net/mrmen/images/7/7f/Mr_Happy.jpg/revision/latest?cb=20140102171729',
+    avatar_url: 'https://s3-media3.fl.yelpcdn.com/bphoto/zFsykzf92R8QlmHKBNFdgA/ls.jpg',
   },
   {
     username: 'cooljmessy',
     name: 'Peter Messy',
-    avatar_url: 'https://i.imgur.com/WfX0Neu.jpg',
+    avatar_url: 'https://www.studio-grey.net/wp-content/uploads/2018/09/actors_headshot_oliverbrown-250.jpg',
   },
   {
     username: 'weegembump',
     name: 'Gemma Bump',
-    avatar_url: 'https://www.upandrunning.co.uk/media/catalog/product/cache/1/image/650x/040ec09b1e35df139433887a97daa66f/m/r/mr-bump.jpg',
+    avatar_url: 'http://www.floankah.com/actressnyc/wp-content/uploads/2019/09/FloAnkah_15JM-04_thumb.jpg',
   },
   {
     username: 'jessjelly',
     name: 'Jess Jelly',
-    avatar_url: 'https://s-media-cache-ak0.pinimg.com/564x/39/62/ec/3962eca164e60cf46f979c1f57d4078b.jpg',
+    avatar_url: 'https://s3-media1.fl.yelpcdn.com/bphoto/aVtkNa-2n8qb0ZDZdsR8Dg/ls.jpg',
   },
   {
-    username: 'Guest',
-    name: 'Unknown',
-    avatar_url: 'https://s-media-cache-ak0.pinimg.com/564x/39/62/ec/3962eca164e60cf46f979c1f57d4078b.jpg',
+    username: 'YemxCode',
+    name: 'Yemi',
+    avatar_url: 'https://ssl.c.photoshelter.com/img-get2/I0000uyxb2_TFzMI/fit=/fill=250x250/g=G0000Pa2WAV87qgo/I0000uyxb2_TFzMI.jpg',
   }
 ];
