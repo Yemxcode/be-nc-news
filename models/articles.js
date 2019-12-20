@@ -76,7 +76,7 @@ exports.fetchCommentsById = (id, sort ="created_at", order = "desc") => {
 
 
 
-exports.fetchArticles = (sort = "articles.created_at", order = "desc", author, topic) => {
+exports.fetchArticles = (sort = "articles.created_at", order = "desc", author, topic, page) => {
   const validateTopic = () => {
     if(topic)
     return knex('topics')
@@ -123,7 +123,7 @@ exports.fetchArticles = (sort = "articles.created_at", order = "desc", author, t
       "articles.votes"
     )
     .from("articles")
-    .limit(10).offset(0)
+    .limit(10).offset((page - 1) * 10)
     .count({ comment_count: "comments.article_id" })
     .leftJoin("comments", "comments.article_id", "articles.article_id")
     .groupBy("articles.article_id")
@@ -138,6 +138,19 @@ exports.fetchArticles = (sort = "articles.created_at", order = "desc", author, t
         return promises = Promise.all([[], validateTopic(), validateAuthor()]).then(([arr]) => arr)}
     return articles
     })
+};
+
+exports.totalArticleCount = (author, topic) => {
+  return knex
+    .select("*")
+    .from("articles")
+    .modify(query => {
+      if (author) query.where("articles.author", author);
+      if (topic) query.where("articles.topic", topic);
+    })
+    .then(articles => {;
+      return articles.length;
+    });
 };
 
 
@@ -160,4 +173,26 @@ exports.insertArticle = (author, topic, title, body) => {
       .returning("*")
         .then(([article]) => article)
 };
+
+
+// exports.checkIfExists = (query, table, column) => {
+//   return knex
+//     .select("*")
+//     .from(table)
+//     .where(column, query)
+//     .then(result => {
+//       if (result.length === 0) return false;
+//       else return true;
+//     });
+// };
+
+
+
+
+
+
+
+
+
+
 
