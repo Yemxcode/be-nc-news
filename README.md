@@ -1,120 +1,121 @@
 
-NC News Backend.
 
-This serves as a RESTful API for my NC News Frontend UI. 
- 
-NC News is a social news page, housing articles of relative topics, social commentary, trending themes, their respective rating, and discussion. This platform has been built to inform and entertain, reminiscent of Reddit. NC News has articles which are divided into topics. Each article has user driven ratings and can be up or down voted using the API. Users can also add comments related to an an article, comments which can also be voted up or down, comments can also be removed by the author.
+# NC News Backend
 
 
-Getting Started:
+NorthCoders News is a web platform similar to Reddit, a social news aggregation, web content rating, and discussion website.
 
-Please ensure have installed Node.js and PostgreSQL.
+NorthCders News has articles which are divided into topics. Each article has user curated ratings and can be up or down voted using the API. Users can also add comments about an article. Comments can also be up or down voted. A user can add comments and remove any comments which they have added.
 
-feel free to run this repo on your own operating system then by to cloning it.  
-Run npm install to install all required dependencies.
+I have used Node.js, Express and PostgreSQL to build this application which will store articles, comments and users data and their relationships. Serving this information via RESTful endpoints. The frontend for this application utilises this data and presents it for the client.
+___
+## Getting Started
 
-Testing and Development, will require you to create a knexfile.js, this should be added to your .gitignore file. 
+I have followed TDD (Test Driven Development) best practices while building this application. If you would like to see the tests in action or run the application locally instructions to do so are below.
+___
+## Prerequisites
 
-Here is a blue print:
+_Please ensure you have Node and PSql installed, as you will not be able to run this application locally otherwise._
+_To verify you have each installed you will need to open terminal window and run the following commands:_
+
+**which node**
+**which psql**
+
+If either/both command does not return a file path  
+i.e  
+_/usr/local/bin/node_ 
+_/usr/local/bin/psql_
+you will need to follow the appropriate instructions installing below:
+
+_Node (and npm)_
+_PSql_
+
+After verifying you have installed both you can run a local version by completing the following steps:
+
+* Open a terminal instance
+* Clone this repository from GitHub by running git clone https://github.com/Yemxcode/be-nc-news.git in the terminal
+* Add dependencies by typing **npm install** in the terminal
+* Start a new terminal window and enter **npm run seed:dev** to add data to the database. This may take a few minutes as there's a fair amount of data. When the process is complete the console will display 'Database seeded' and the node process will terminate.
+* You can then run the application using **npm run dev**
+Running the tests
+* To run the tests you will need to open a new terminal instance and **run npm test**. You will see the result of each test along with a brief explanation of the test.
+
+_Testing and Development, will require you to create a knexfile.js, this should be added to your .gitignore file._
+
+## Blue print:
 
 const ENV = process.env.NODE_ENV || 'development';
 const { DB_URL } = process.env;
 
 const baseConfig = {
-  client: 'pg',
-  migrations: {
-    directory: './db/migrations',
-  },
-  seeds: {
-    directory: './db/seeds',
-  },
+client: 'pg',
+migrations: {
+directory: './db/migrations',
+},
+seeds: {
+directory: './db/seeds',
+},
 };
 
 const customConfigs = {
-  development: {
-    connection: {
-      database: 'nc_news',
-      // username: "" << linux users only
-      // password: "" << linux users only
-    },
-  },
-  test: {
-    connection: {
-      database: 'nc_news_test',
-      // username: "", << linux users only
-      // password: "", << linux users only
-    },
-  },
-  production: {
-    connection: `${DB_URL}?ssl=true`,
-  },
+development: {
+connection: {
+database: 'nc_news',
+// username: "" << _linux users only_
+// password: "" << _linux users only_
+},
+},
+test: {
+connection: {
+database: 'nc_news_test',
+// username: "", << _linux users only_
+// password: "", << _linux users only_
+},
+},
+production: {
+connection: `${DB_URL}?ssl=true`,
+},
 };
 
 module.exports = { ...baseConfig, ...customConfigs[ENV] };
 
-To seed the database run: "npm run seed" in your terminal.
+What's tested?
+Each of the applications endpoints, with both successful and unsuccessful requests (where applicable).
 
-Next step: "npm run dev", this will start up the local server.
+## Routes
 
-Once the local server is up and running navigate your browser to localhost:9090/api. 
-This endpoint describes all the available endpoints on this API.
-
-
-To run tests type and run npm test in the terminal when in the repo. This will run tests using the Mocha test framework, Chai assertion library and the Supertest HTTP server testing library. First the API endpoints are tested followed by the utility functions necessary for seeding the data.
-
-Built With
-Express - The web framework used
-API Routes:
-
-
-GET
-/api 
-Serves a json object representing all the available endpoints of the API
-
-/api/topics 
-Serves an array of all topics
-
-/api/articles 
-Serves an array of all articles
-
-/api/users
-Serves an array of all users
-
-/api/users/:username 
-Responds with a a user object with details about the given user
-
-/api/articles/:article_id 
-Responds with an article object for the given article ID
-
-/api/articles/:article_id/comments 
-When given a valid article ID, responds with an array of comments for that article
-
-PATCH
-/api/articles/:article_id 
-Accepts an object in the form of { inc_votes: newVote} and responds with the updated article
-
-/api/comments/:comment_id 
-Accepts an object in the form of { inc_votes: newVote} and responds with the updated comment.
-
-POST
-/api/articles/:article_id/comments 
-Request body accepts an object in the form of {username: "yourUsername", body: "This is an amazing article"} and responds with the posted comment.
-
-/api/topics
-Request body accepts an object in the form of {description: "The art of living like a fish", slug: "swimming"} and responds with the posted topic.
-
-/api/users
-Request body accepts an object in the form of { username: "TooCoolForSkool", avatar_url: "myCoolAvatar.jpeg", name: "Joe Bloggs"} and responds with the posted user.
-
-/api/articles
-
-Request body accepts an object in the form of {author: "TooCoolForSkool", body: "This is smy article", topic: "example", title: "how not to write an article"} and responds with the posted article.
+> GET /api/topics - Return all topics
+> GET /api/topics/:topic/articles - Return all articles for a particular topic ID
+> GET /api/articles - Return all articles
+> GET /api/articles/:article_id/ - Return an individual article by its ID
+> GET /api/articles/:article_id/comments - Return all comments for a single article ID
+> POST /api/articles/:article_id/comments - Add a new comment to the appropriate article ID
+> PUT /api/articles/:article_id - Increment/decrement votes on an article
+> PUT /api/comments/:comment_id - Increment/decrement votes on a comment
+> DELETE /api/comments/:comment_id - Delete a comment with the correlating id 
+> GET /api/users - Return all user profiles
+> GET /api/users/:username - Return a user profile along with their articles and comments
+> POST /api/articles - Add a new article published by a specific user
+> POST /api/users - Add a new user to the database
+> POST /api/topics - Add a new topic to the database
+> DELETE /api/articles/:article_id - Delete an article with the correlating id
 
 
-DELETE
-/api/comments/:comment_id 
-Deletes the comment given by comment_id and responds with status 204
+## Build steps:
 
-/api/articles/:article_id 
-Deletes the article given by article_id and responds with status 204
-  
+* NodeJS - JavaScript runtime
+* PostgreSQL - SQL database
+* Express - Web Application Framework
+
+## Testing:
+
+**npm install mocha, chai, supertest -D**
+**npm test**
+
+## Usage:
+
+**npm run setup-dbs**
+**npm run seed**
+
+## Acknowledgments
+_Everyone at NorthCoders for their outstanding curriculum and support. They gave me the knowledge and confidence to build a career in Software Development._
