@@ -15,7 +15,7 @@ ___
 I have followed TDD (Test Driven Development) best practices while building this application. If you would like to see the tests in action or run the application locally instructions to do so are below.
 ___
 
-## Prerequisites
+## Prerequisites
 
 _Please ensure you have Node and PSql installed, as you will not be able to run this application locally otherwise._
 _To verify you have each installed you will need to open terminal window and run the following commands:_
@@ -30,8 +30,8 @@ _/usr/local/bin/node_
 _/usr/local/bin/psql_
 
 You will need to follow the appropriate instructions installing below:
-* [] _Node (and npm)_    
-* [] _PSql_
+*  _Node (and npm)_    
+*  _PSql_
 
 After verifying you have installed both you can run a local version by completing the following steps:
 
@@ -90,25 +90,23 @@ ___
 ## Routes
 
 
-| -------- | ---------------------------------- | ------------- | --------------------------------------- |
-| METHOD   | API                                | HTTP STATUS   | RESPONSE                                |
-| -------- | ---------------------------------- | ------------- | --------------------------------------- |
-| GET      | /api/topics                        | 200           | Return all topics                       |
-| GET      | /api/topics/:topic/articles        | 200           | Return all articles for a topic         |
-| GET      | /api/articles                      | 200           | Return all articles                     |
-| GET      | /api/articles/:article_id          | 200           | Return a single article by its ID       |
-| GET      | /api/articles/:article_id/comments | 200           | Return all comments of single article   |
-| GET      | /api/users                         | 200           | Return all Users                        |
-| GET      | /api/users/:username               | 200           | Return single User by its username      |
-| POST     | /api/articles                      | 201           | Add new Article to the database         |
-| POST     | /api/users                         | 201           | Add new User to the database            |
-| POST     | /api/topics                        | 201           | Add new Topic to the database           |
-| POST     | /api/articles/:article_id/comments | 201           | Add new Comment to the database         |
-| PATCH    | /api/articles/:article_id          | 200           | Increment/decrement votes on an Article |
-| PATCH    | /api/comments/:comment_id          | 200           | Increment/decrement votes on a Comment  |
-| DELETE   | /api/articles/:article_id          | 204           | Remove an Article from the database     |
-| DELETE   | /api/comments/:comment_id          | 204           | Remove a Comment from the database      |
-| -------- | ---------------------------------- | ------------- | --------------------------------------- |
+| METHOD |                 API                | HTTP STATUS | RESPONSE                                |
+|:------:|:----------------------------------:|-------------|-----------------------------------------|
+| GET    | /api/topics                        | 200         | Return all topics                       |
+| GET    | /api/topics/:topic/articles        | 200         | Return all articles for a topic         |
+| GET    | /api/articles                      | 200         | Return all articles                     |
+| GET    | /api/articles/:article_id          | 200         | Return a single article by its ID       |
+| GET    | /api/articles/:article_id/comments | 200         | Return all comments of single article   |
+| GET    | /api/users                         | 200         | Return all Users                        |
+| GET    | /api/users/:username               | 200         | Return single User by its username      |
+| POST   | /api/articles                      | 201         | Add new Article to the database         |
+| POST   | /api/users                         | 201         | Add new User to the database            |
+| POST   | /api/topics                        | 201         | Add new Topic to the database           |
+| POST   | /api/articles/:article_id/comments | 201         | Add new Comment to the database         |
+| PATCH  | /api/articles/:article_id          | 200         | Increment/decrement votes on an Article |
+| PATCH  | /api/comments/:comment_id          | 200         | Increment/decrement votes on a Comment  |
+| DELETE | /api/articles/:article_id          | 204         | Remove an Article from the database     |
+| DELETE | /api/comments/:comment_id          | 204         | Remove a Comment from the database      |
 ___
 
 ## Build steps:
@@ -121,17 +119,18 @@ ___
 ## Testing:
 
 ```bash
-**npm install mocha, chai, supertest -D**   
-**npm test**
+npm install mocha, chai, supertest -D    
+npm test
 ```
 ___
 
 ## Usage:
 
 ```bash
-**npm run setup-dbs**  
-**npm run seed**
+npm run setup-dbs  
+npm run seed
 ```
 ___
-## Acknowledgments   
+
+## Acknowledgments   
 >_Everyone at NorthCoders for their outstanding curriculum and support. They gave me the knowledge and confidence to build a career in Software Development._
