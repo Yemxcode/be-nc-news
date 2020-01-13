@@ -46,7 +46,7 @@ Running the tests
 _Testing and Development, will require you to create a knexfile.js, this should be added to your .gitignore file._
 ___
 
-## Blue print:
+## Blueprint:
 
 ```javascript
 const ENV = process.env.NODE_ENV || 'development';
