@@ -90,9 +90,9 @@ ___
 ## Routes
 
 
-|----------|------------------------------------|---------------|-----------------------------------------|
+| -------- | ---------------------------------- | ------------- | --------------------------------------- |
 | METHOD   | API                                | HTTP STATUS   | RESPONSE                                |
-|----------|------------------------------------|---------------|-----------------------------------------|
+| -------- | ---------------------------------- | ------------- | --------------------------------------- |
 | GET      | /api/topics                        | 200           | Return all topics                       |
 | GET      | /api/topics/:topic/articles        | 200           | Return all articles for a topic         |
 | GET      | /api/articles                      | 200           | Return all articles                     |
@@ -108,7 +108,7 @@ ___
 | PATCH    | /api/comments/:comment_id          | 200           | Increment/decrement votes on a Comment  |
 | DELETE   | /api/articles/:article_id          | 204           | Remove an Article from the database     |
 | DELETE   | /api/comments/:comment_id          | 204           | Remove a Comment from the database      |
-|----------|------------------------------------|---------------|-----------------------------------------|
+| -------- | ---------------------------------- | ------------- | --------------------------------------- |
 ___
 
 ## Build steps:
